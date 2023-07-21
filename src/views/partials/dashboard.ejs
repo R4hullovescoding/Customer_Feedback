@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DashBoard</title>
+    <link rel="stylesheet" type="text/css" href="../../public/style.css" />
+    <!-- <style>
+        .reviews{
+            border:2px solid red;
+            background-color: aqua;
+        }
+    </style> -->
+  </head>
+  <body>
+    <section id="existing-reviews">
+      
+      <% for(let i=0;i<reviewsList.length;i++){ %>
+            <div id="review-list">
+                <div class="review">
+                    <h3><%= reviewsList[i].title %></h3>
+                    <p> <%= reviewsList[i].content %> </p>
+                    <p><%= reviewsList[i].rating %> </p>
+                </div>
+            </div> 
+        <%} %>
+        <div id="review-list">
+
+        </div>
+    </section>
+  </body>
+</html>
+<script>
+    
+</script>

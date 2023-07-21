@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pagination</title>
+    <link rel="stylesheet" href="../../public/style.css" />
+    <style>
+      #pagination {
+        font-size: 5rem;
+      }
+      .review {
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin-bottom: 10px;
+      }
+
+      .review p {
+        margin: 0;
+      }
+      #new-review {
+        display: relative;
+      }
+      #review-list {
+        display: grid;
+        grid-template-columns: 1fr;
+        margin: 10px;
+        padding: 5px;
+      }
+      #sortingFiltering {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        justify-content: space-around;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Sorting review on the basis of date and rating   -->
+    <div id="sortingFiltering">
+      <div id="sorting-options">
+        <label for="sort-by">Sort By:</label>
+        <select id="sort-by" onchange="handleSortChange()">
+          <option value="rating">Rating</option>
+          <option value="date">Date</option>
+        </select>
+      </div>
+      <div id="filter-options">
+        <label for="rating-filter">Rating:</label>
+        <select id="rating-filter" onchange="handleFilterChange()">
+          <option value="">All Ratings</option>
+          <option value="4">4 stars or above</option>
+          <option value="3">3 stars or above</option>
+          <option value="2">2 stars or above</option>
+          <option value="1">1 star or above</option>
+        </select>
+
+        <label for="keyword-filter">Keyword:</label>
+        <input
+          type="text"
+          id="keyword-filter"
+          oninput="handleFilterChange()"
+          placeholder="Enter a keyword"
+        />
+      </div>
+    </div>
+    <div id="review-list"></div>
+    <%- include('partials/postreview') %>
+    <div id="pagination"></div>
+
+    <script>
+      
+
+      function handleSortChange() {
+        const sortBy = document.getElementById("sort-by").value;
+        console.log("sortBy value is :", sortBy);
+        const url = new URL(window.location.href);
+        url.searchParams.set("sortBy", sortBy);
+        window.history.pushState({ sortBy }, "", url.toString());
+        fetchSortedReviews(sortBy);
+      }
+      
+      async function handleFilterChange() {
+        const ratingFilter = parseInt(
+          document.getElementById("rating-filter").value
+        );
+        const keywordFilter = document
+          .getElementById("keyword-filter")
+          .value.toLowerCase();
+        const filteredReviews = await filterReviews(ratingFilter, keywordFilter);
+        // console.log(filteredReviews);
+        renderReviewList(filteredReviews);
+      }
+
+      // document.addEventListener("DOMContentLoaded", () => {
+      async function fetchPaginatedReviews(page, pageSize) {
+        try {
+          // Fetch the paginated reviews from the backend based on the page and pageSize parameters
+          const response = await fetch(
+            `/api/reviewsdata?page=${page}&pageSize=${pageSize}`
+          );
+          const { reviewsList, totalPages } = await response.json();
+
+          // Update the review list UI
+          console.log(reviewsList);
+          renderReviewList(reviewsList);
+          // Render pagination links
+          renderPagination(page, totalPages);
+        } catch (error) {
+          console.error(error);
+          // Handle error
+        }
+      }
+      function renderReviewList(reviewsList) {
+        const reviewListElement = document.getElementById("review-list");
+        reviewListElement.innerHTML = "";
+        reviewsList.forEach((review) => {
+          let reviewItem = document.createElement("div");
+          reviewItem.classList.add("review");
+          let reviewTitle = document.createElement("h3");
+          reviewTitle.textContent = review.title;
+          let reviewContent = document.createElement("p");
+          reviewContent.textContent = review.content;
+          let reviewRating = document.createElement("div");
+          reviewRating.classList.add("star-rating");
+          reviewRating.textContent = review.rating;
+          reviewItem.appendChild(reviewTitle);
+          reviewItem.appendChild(reviewContent);
+          reviewItem.appendChild(reviewRating);
+          reviewListElement.appendChild(reviewItem);
+        });
+      }
+      function renderPagination(page, totalPages) {
+        const paginationElement = document.getElementById("pagination");
+        paginationElement.innerHTML = "";
+        // console.log(totalPages);
+        for (let i = 1; i <= totalPages; i++) {
+          const pageLink = document.createElement("a");
+          pageLink.href = `?page=${i}`;
+          pageLink.textContent = i;
+
+          if (i === page) {
+            pageLink.classList.add("active");
+          }
+
+          paginationElement.appendChild(pageLink);
+        }
+      }
+
+      async function fetchSortedReviews(sortBy) {
+        // Fetch the sorted reviews from the backend based on the sortBy parameter
+        // console.log(sortBy);
+        const response = await fetch(
+          `/api/reviewsdata?sortBy=${sortBy}&page=${page}&pageSize=${pageSize}`
+        );
+
+        const { reviewsList } = await response.json();
+        // Update the review list UI
+        // console.log(reviewsList);
+        renderReviewList(reviewsList);
+      }
+      
+
+      // Adding fliter feature
+
+     async function filterReviews(ratingFilter, keywordFilter) {
+        const response = await fetch(
+          `/api/reviewsFiltered`
+        );
+        const { reviewsList } = await response.json();
+        const filteredReviews = reviewsList.filter((review) => {
+          // Apply rating filter
+          if (ratingFilter !== "" && review.rating < ratingFilter) {
+            return false;
+          }
+
+          // Apply keyword filter
+          if (keywordFilter !== "" && !review.content.includes(keywordFilter)) {
+            return false;
+          }
+
+          return true;
+        });
+
+        return filteredReviews;
+      }
+
+      
+      // Assuming you have an existing function to extract query parameters from the URL
+
+      function getQueryParameter(page) {
+        const params = new URLSearchParams(window.location.search);
+        return params.get(page);
+      }
+
+      // Entry point
+      // fetchSortedReviews("rating");
+      var page = parseInt(getQueryParameter("page")) || 1;
+      const pageSize = 5;
+
+      fetchPaginatedReviews(page, pageSize);
+      const pageLinks = document.querySelectorAll("#pagination a");
+
+      pageLinks.forEach((pageLink) => {
+        pageLink.addEventListener("click", (event) => {
+          event.preventDefault();
+          const page = parseInt(event.target.textContent);
+          navigateToPage(page);
+        });
+      });
+
+      function navigateToPage(page) {
+        const url = new URL(window.location.href);
+        url.searchParams.set("page", page);
+        window.history.pushState({ page }, "", url.toString());
+
+        fetchPaginatedReviews(page, pageSize);
+      }
+      // });
+    </script>
+  </body>
+</html>
