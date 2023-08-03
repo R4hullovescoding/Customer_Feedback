@@ -4,63 +4,157 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Pagination</title>
-    <link rel="stylesheet" href="../../public/style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    />
+    <link rel="stylesheet" href="../../public/css/reviewsDashboard.css" />
+    <!-- Add this in the <head> section of your HTML file -->
     <style>
-      #pagination {
-        font-size: 5rem;
+      body{
+        background-color: rgb(227, 150, 6);
       }
-      .review {
-        border: 1px solid #ccc;
-        padding: 10px;
+      #keyword{
+        margin-top: 30px;
+        margin-bottom: 50px;
+      }
+     #starFilter{
+      margin-top:50px;
+      margin-left:100px;
+     }
+     #sorting-options{
+      margin-top:50px;
+     }
+      .reviews {
+        max-width: 100%;
+        background-color: #e5e1e1;
+        padding: 20px;
+        margin-left:100px;
+        margin-right:100px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+        border: 1px solid #030303;
+        transition: box-shadow 0.3s ease;
+      }
+      .reviews:hover {
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+      }
+      .title {
+        font-size: 1.3rem;
         margin-bottom: 10px;
       }
+      .content {
+        font-size: 1rem;
+        margin-bottom: 15px;
+      }
+      .star-rating {
+        font-size: 1.2rem;
+        text-align: right;
+      }
 
-      .review p {
-        margin: 0;
-      }
-      #new-review {
-        display: relative;
-      }
-      #review-list {
-        display: grid;
-        grid-template-columns: 1fr;
-        margin: 10px;
-        padding: 5px;
-      }
-      #sortingFiltering {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        justify-content: space-around;
-      }
+      /* Pagination container */
+#pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  list-style: none;
+  padding: 0;
+  margin: 20px 0;
+  margin-bottom:20px;
+  padding-bottom: 20px;
+}
+
+/* Pagination link */
+#pagination a {
+  color: #333;
+  text-decoration: none;
+  padding: 8px 12px;
+  margin: 0 4px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+/* Active page */
+#pagination a.active {
+  background-color: #007bff;
+  color: #fff;
+  border-color: #007bff;
+}
+
+/* Hover effect */
+#pagination a:hover:not(.active) {
+  background-color: #f2f2f2;
+}
+
+/* Disabled page links */
+#pagination a.disabled {
+  pointer-events: none;
+  opacity: 0.5;
+  cursor: default;
+}
+.navbar{
+  background-color: rgb(38, 174, 232);
+  height: 50px;
+}
+.logo{
+  margin-left: 650px;
+}
+
     </style>
   </head>
   <body>
+    <nav class="navbar" role="navigation" aria-label="main navigation">
+      <div class="navbar-brand">
+        <a class="navbar-item" href="#">
+          <img src="https://freepngimg.com/thumb/web_design/42851-3-cart-free-clipart-hd.png" class="logo" alt="E Commerce" width="60" height="60">
+        </a>
+        <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+        </a>
+      </div>
+    </nav>
+    <div class="container text-center">
+      <div class="row">
+        <div id="sorting-options" class="select is-rounded" class="col">
+          <!-- <label for="sort-by">Sort By:</label> -->
+          <select id="sort-by" onchange="handleSortChange()">
+            <option value="rating">Sort By</option>
+            <option value="rating">Rating</option>
+            <option value="date">Date</option>
+          </select>
+        </div>
+        <div id="starFilter" class="select is-rounded" class="col">
+          <select id="rating-filter" onchange="handleFilterChange()">
+            <option value="">All Ratings</option>
+            <option value="4">4 stars or above</option>
+            <option value="3">3 stars or above</option>
+            <option value="2">2 stars or above</option>
+            <option value="1">1 star or above</option>
+          </select>
+        </div>
+        <div id="keyword" class="control" class="col">
+          <label for="keyword-filter">Keyword:</label>
+          <input
+            class="input is-focused"
+            type="text"
+            id="keyword-filter"
+            oninput="handleFilterChange()"
+            placeholder="Enter a keyword"
+          />
+        </div>
+      </div>
+    </div>
     <!-- Sorting review on the basis of date and rating   -->
     <div id="sortingFiltering">
-      <div id="sorting-options">
-        <label for="sort-by">Sort By:</label>
-        <select id="sort-by" onchange="handleSortChange()">
-          <option value="rating">Rating</option>
-          <option value="date">Date</option>
-        </select>
-      </div>
       <div id="filter-options">
-        <label for="rating-filter">Rating:</label>
-        <select id="rating-filter" onchange="handleFilterChange()">
-          <option value="">All Ratings</option>
-          <option value="4">4 stars or above</option>
-          <option value="3">3 stars or above</option>
-          <option value="2">2 stars or above</option>
-          <option value="1">1 star or above</option>
-        </select>
-
-        <label for="keyword-filter">Keyword:</label>
-        <input
-          type="text"
-          id="keyword-filter"
-          oninput="handleFilterChange()"
-          placeholder="Enter a keyword"
-        />
+        <!-- <label for="rating-filter">Rating:</label> -->
       </div>
     </div>
     <div id="review-list"></div>
@@ -68,8 +162,6 @@
     <div id="pagination"></div>
 
     <script>
-      
-
       function handleSortChange() {
         const sortBy = document.getElementById("sort-by").value;
         console.log("sortBy value is :", sortBy);
@@ -78,7 +170,7 @@
         window.history.pushState({ sortBy }, "", url.toString());
         fetchSortedReviews(sortBy);
       }
-      
+
       async function handleFilterChange() {
         const ratingFilter = parseInt(
           document.getElementById("rating-filter").value
@@ -86,7 +178,10 @@
         const keywordFilter = document
           .getElementById("keyword-filter")
           .value.toLowerCase();
-        const filteredReviews = await filterReviews(ratingFilter, keywordFilter);
+        const filteredReviews = await filterReviews(
+          ratingFilter,
+          keywordFilter
+        );
         // console.log(filteredReviews);
         renderReviewList(filteredReviews);
       }
@@ -115,10 +210,12 @@
         reviewListElement.innerHTML = "";
         reviewsList.forEach((review) => {
           let reviewItem = document.createElement("div");
-          reviewItem.classList.add("review");
+          reviewItem.classList.add("reviews");
           let reviewTitle = document.createElement("h3");
           reviewTitle.textContent = review.title;
+          reviewTitle.classList.add("title");
           let reviewContent = document.createElement("p");
+          reviewContent.classList.add("content");
           reviewContent.textContent = review.content;
           let reviewRating = document.createElement("div");
           reviewRating.classList.add("star-rating");
@@ -158,14 +255,11 @@
         // console.log(reviewsList);
         renderReviewList(reviewsList);
       }
-      
 
       // Adding fliter feature
 
-     async function filterReviews(ratingFilter, keywordFilter) {
-        const response = await fetch(
-          `/api/reviewsFiltered`
-        );
+      async function filterReviews(ratingFilter, keywordFilter) {
+        const response = await fetch(`/api/reviewsFiltered`);
         const { reviewsList } = await response.json();
         const filteredReviews = reviewsList.filter((review) => {
           // Apply rating filter
@@ -184,7 +278,6 @@
         return filteredReviews;
       }
 
-      
       // Assuming you have an existing function to extract query parameters from the URL
 
       function getQueryParameter(page) {
@@ -217,5 +310,7 @@
       }
       // });
     </script>
+    <!-- Add this before the closing </body> tag of your HTML file -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
   </body>
 </html>

@@ -5,7 +5,6 @@ const router=express.Router();
 const Review=mongoose.model("review");
 router.get('/reviews', async (req, res) => {
   try {
-    
     const {page,pageSize}=req.query;
     const {sortBy}=req.query;
     const limit=parseInt(pageSize);
@@ -79,4 +78,5 @@ router.post('/reviews',async(req,res)=>{
         res.status(400).json({error:"Opps,Something goes Wrong"});
     }
 });
+
 module.exports=router;

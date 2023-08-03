@@ -68,18 +68,16 @@
       #review-form button:hover {
         background-color: #0056b3;
       }
-      .review {
-        border: 1px solid #ccc;
-        padding: 10px;
-        margin-bottom: 10px;
-      }
-
-      .review p {
-        margin: 0;
-      }
       #new-review {
         display: relative;
       }
+    #new-review h2{
+        text-align: center;
+        font-size:2rem;
+        font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+        font-weight: 500;
+    }
+    
     </style>
     <title>PostReview</title>
   </head>
@@ -89,7 +87,7 @@
         <h2>Add a Review</h2>
         <form id="review-form">
           <label for="name">Name:</label>
-          <input type="text" id="name" name="review-text" required />
+          <input class="input is-focused" type="text" id="name" name="review-text" required />
 
           <!-- <label for="rating">Rating:</label>
     
@@ -105,7 +103,7 @@
            </select> -->
 
           <label for="comments">Comments:</label>
-          <textarea id="comments" rows="4"></textarea>
+          <textarea class="textarea is-link" id="comments" rows="4"></textarea>
           <div class="star-rating">
             <input type="radio" name="rating" id="rating-5" value="5" />
             <label for="rating-5">&#9733;</label>
@@ -154,7 +152,8 @@
         content: content,
         rating: rating,
       }),
-      headers: { "content-type": "application/json" },
+      headers: { "content-type": "application/json",
+      Authorization: `Bearer ${localStorage.getItem("ecommerece")}`, },
     });
     console.log(response);
   });

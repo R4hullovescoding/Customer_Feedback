@@ -1,0 +1,37 @@
+#pagination {
+    font-size: 5rem;
+  }
+
+  #new-review {
+    display: relative;
+  }
+  #review-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    margin: 10px;
+    padding: 5px;
+  }
+  #sortingFiltering {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    justify-content: space-around;
+  }
+
+  #startFilter{
+    height: 30px;
+    width: 250px;
+  }
+  #keyword{
+    height:30px;
+    width:250px;
+  }
+  #filter-options{
+    height:30px;
+    width:600px;
+    display: flex;
+    justify-content: space-between;
+    
+}
+
+
+
